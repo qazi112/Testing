@@ -1,1 +1,6 @@
 here is my text file
+here is new line
+here is new line
+here is new line
+here is new line
+here is new line
