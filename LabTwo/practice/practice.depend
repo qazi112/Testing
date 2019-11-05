@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1568966796 source:d:\dsa labs\labtwo\practice\main.cpp
+	<fstream>
+	<string>
+	<iostream>
+
