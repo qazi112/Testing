@@ -23,19 +23,11 @@ public:
 
 bool Hashing::isFull()
 {
-    if(counter==10)
-        return true;
-    else {
-        return false;
-    }
+    return counter==10;
 }
 bool Hashing::isEmpty()
 {
-    if(counter==0)
-        return true;
-    else {
-        return false;
-    }
+    return counter==0;
 }
 void Hashing::insert(int key)
 {
