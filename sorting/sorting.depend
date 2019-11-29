@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1575021344 source:d:\dsa labs\sorting\insertion.cpp
+	<iostream>
+
+1575021948 source:d:\dsa labs\sorting\main.cpp
+	<iostream>
+
+1575028534 source:d:\dsa labs\sorting\mergesort.cpp
+	<iostream>
+
+1575027460 source:d:\dsa labs\sorting\mergenewalog.cpp
+	<iostream>
+
