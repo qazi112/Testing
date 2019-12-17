@@ -1,19 +1,20 @@
 Include D:\COA LABS\Irvine\Irvine32.inc
 .data
 ;-------------PROTO----------------;
+
+;-------------- 32 bit Functions---------;
 area_32_whole proto, fst:sdword,scd:sdword
 area_32_float proto,fst:REAL4,scd:REAL4
 area_32_fw proto,fst:REAL4,scd:sdword
 area_32_wf proto,fst:sdword,scd:REAL4
+;-------------- 32 bit Functions---------;
 
-
+;-------------- 16 bit Functions---------;
 area_16_whole proto, fst:sword,scd:sword
 area_16_float proto,fst:REAL2,scd:REAL2
 area_16_fw proto,fst:REAL2,scd:sword
 area_16_wf proto,fst:sword,scd:REAL2
-
-
-
+;-------------- 16 bit Functions---------;
 
 ;----------- Variables ------------;
 ;-------------- 32 bit var---------;
