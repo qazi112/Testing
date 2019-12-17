@@ -1,58 +1,69 @@
+;------------16 bit and 32 bit-------; 
 Include D:\COA LABS\Irvine\Irvine32.inc
 .data
-;-------------PROTO----------------;
+
+;------------- PROTO ----------------;
 
 ;-------------- 32 bit Functions---------;
-area_32_whole proto, fst:sdword,scd:sdword
-area_32_float proto,fst:REAL4,scd:REAL4
-area_32_fw proto,fst:REAL4,scd:sdword
-area_32_wf proto,fst:sdword,scd:REAL4
+area_32_whole proto, fst2:sdword,scd:sdword
+area_32_float proto,fst2:REAL4,scd:REAL4
+area_32_fw proto,fst2:REAL4,scd:sdword
+area_32_wf proto,fst2:sdword,scd:REAL4
 ;-------------- 32 bit Functions---------;
 
 ;-------------- 16 bit Functions---------;
-area_16_whole proto, fst:sword,scd:sword
-area_16_float proto,fst:REAL2,scd:REAL2
-area_16_fw proto,fst:REAL2,scd:sword
-area_16_wf proto,fst:sword,scd:REAL2
+area_16_whole proto, fst2:sword,scd:sword
+area_16_float proto,fst2:REAL4,scd:REAL4
+area_16_fw proto,fst2:REAL4,scd:sword
+area_16_wf proto,fst2:sword,scd:REAL4
 ;-------------- 16 bit Functions---------;
 
-;----------- Variables ------------;
-;-------------- 32 bit var---------;
+;-------------- Variables ---------------;
+;-------------- 32 bit var---------------;
 firstOperand SDWORD ?
 secondOperand SDWORD ?
 firstOpFloat REAL4 ?
 secondOpFloat REAL4 ?
+resultFloat32 REAL4 ?
+resultWhole32 sdword ?
 ;-------------- 32 bit var---------;
 
 ;-------------- 16 bit var---------;
+firstOperand16 SWORD ?
+secondOperand16 SWORD ?
+firstOpFloat16 REAL4 ?
+secondOpFloat16 REAL4 ?
+resultFloat16 REAL4 ?
+resultWhole16 sword ?
 ;-------------- 16 bit var---------;
 ;----------- Variables ------------;
 ;--------- Case Table -------------;
 caseTable BYTE '1'
-	DWORD 32_BitProgram
+	DWORD A32_BitProgram
 EntrySize=($-caseTable)
 	byte '2'
-	DWORD 16_BitProgram
+	DWORD A16_BitProgram
 noOfEntries=($-caseTable)/EntrySize
 
 ;--------- Case Table -------------;
 
 ;--------- Prompts-----------------;
 prompt BYTE "Enter Choices...",0
-displayDetails BYTE "1.32 Bit Programing..",0ah,0dh
-			BYTE "2. 16 Bit Programing..",0
+displayDetails BYTE "1. : 32 Bit Programing  :",0ah,0dh
+			BYTE "2. : 16 Bit Programing  :",0
 
-select32 BYTE "You 32 Bit Programing... ",0ah,0dh,
-		Byte "1. For Both Whole Numbers ",0ah,0dh,
-		Byte "2. For Both Floating points ",0ah,0dh,
-		Byte "3. For First Floating second Whole "0ah,0dh,
-		Byte "3. For First Whole second Floating",0
-select16 BYTE "You 16 Bit Programing... ",0ah,0dh,
-		Byte "1. For Both Whole Numbers ",0ah,0dh,
-		Byte "2. For Both Floating points ",0ah,0dh,
-		Byte "3. For First Floating second Whole "0ah,0dh,
-		Byte "3. For First Whole second Floating",0
-	
+select32 BYTE "You Selected 32 Bit Programing... ",0ah,0dh
+		Byte "1. For Both Whole Numbers ",0ah,0dh
+		Byte "2. For Both Floating points ",0ah,0dh
+		Byte "3. For First Floating second Whole ",0ah,0dh
+		Byte "4. For First Whole second Floating",0
+select16 BYTE "You Selected 16 Bit Programing... ",0ah,0dh
+		Byte "1. For Both Whole Numbers ",0ah,0dh
+		Byte "2. For Both Floating points ",0ah,0dh
+		Byte "3. For First Floating second Whole ",0ah,0dh
+		Byte "4. For First Whole second Floating",0
+enterWhole BYTE "Enter Integer : ",0
+enterFloat BYTE "Enter Floating Point : ",0
 ;--------- Prompts-----------------;
 .code
 main proc
@@ -72,8 +83,8 @@ l1:
 	cmp al,[esi]
 	jne l2
 	je choices
-	;call NEAR PTR [esi+1]
-	jmp L3
+	
+	jmp l3
 l2:
 	add esi,EntrySize
 	loop l1
@@ -81,66 +92,225 @@ l3:
 	exit
 
 choices:
-;------------- 32 Bit ----------------;
+
 	cmp al,'1'
 	jne second
-	call FAR ptr [esi+1]
+	call NEAR ptr [esi+1]
+	jmp l3
 
-32_BitProgram:
+second:
+	cmp al,'2'
+	jne l3
+	call NEAR PTR [esi+1]
+	jmp l3
+
+main endp
+
+
+;--------------------------
+A32_BitProgram proc
 	mov edx, offset select32 
 	call WriteString
 	call Crlf
 	call ReadChar
 	cmp al,'1'
 	jne sec32
+	mov edx,offset enterWhole
+	call WriteString
+	call Crlf
 	call ReadInt
+	mov edx,offset enterWhole
+	call WriteString
+	call Crlf
 	mov firstOperand,eax
 	call ReadInt
 	mov secondOperand,eax
-	
-	jmp l3
+	invoke area_32_whole,firstOperand,secondOperand
+	jmp endll
 sec32:
 	cmp al,'2'
 	jne third32
+	mov edx,offset enterFloat
+	call WriteString
+	call Crlf
+	
 	call ReadFloat
 	fstp firstOpFloat
+	mov edx,offset enterFloat
+	call WriteString
+	call Crlf
 	call ReadFloat
 	fstp secondOpFloat
-	jmp l3
+	invoke area_32_float,firstOpFloat,secondOpFloat
+	jmp endll
 third32:
 	cmp al,'3'
 	jne frth32
+	mov edx,offset enterFloat
+	call WriteString
+	call Crlf
 	call ReadFloat
 	fstp firstOpFloat
+	mov edx,offset enterWhole
+	call WriteString
+	call Crlf
 	call ReadInt
 	mov firstOperand,eax
-
+	invoke area_32_fw ,firstOpFloat,firstOperand
+	jmp endll
 frth32:
 	cmp al,'4'
-	jne l3
+	jne endll
+	mov edx,offset enterWhole
+	call WriteString
+	call Crlf
 	call ReadInt
 	mov firstOperand,eax
+	mov edx,offset enterFloat
+	call WriteString
+	call Crlf
 	call ReadFloat
 	fstp firstOpFloat
-	jmp l3
-
-
-
-
-
-; --------------16 bit-----------------;
-second:
-	cmp al,'2'
-	jne l3
-	call FAR PTR [esi+1]
-
-16_BitProgram
+	invoke area_32_wf,firstOperand,firstOpFloat
+	jmp endll
+endll:	
+	ret
+A32_BitProgram endp
+;---------------------32 Main Proc ----------------;
+;---------------------16 Main Proc ----------------;
+A16_BitProgram proc
 	mov edx,offset select16
 	call WriteString
 	call Crlf
 	call ReadChar
-	jmp l3
-main endp
+	cmp al,'1'
+	jne sec16
+	mov edx,offset enterWhole
+	call WriteString
+	call Crlf
+	call ReadInt
+	mov firstOperand , eax
+	mov ax,sword ptr firstOperand
+	mov firstOperand16,ax 
+	mov edx,offset enterWhole
+	call WriteString
+	call Crlf
+	call ReadInt
+	mov secondOperand,eax
+	mov ax,sword ptr secondOperand
+	mov secondOperand16 ,ax
+	invoke area_16_whole,firstOperand16,secondOperand16
+	jmp endll
+sec16:
+	cmp al,'2'
+	jne third16
+	mov edx,offset enterFloat
+	call WriteString
+	call Crlf
+	call ReadFloat
+	fstp firstOpFloat16
+	mov edx,offset enterFloat
+	call WriteString
+	call Crlf
+	call ReadFloat
+	fstp secondOpFloat16
+	invoke area_16_float ,firstOpFloat16,secondOpFloat16
+	jmp endll
+third16:
+	cmp al,'3'
+	jne frth16
+	mov edx,offset enterFloat
+	call WriteString
+	call Crlf
+	call ReadFloat
+	fstp firstOpFloat16
+	mov edx,offset enterWhole
+	call WriteString
+	call Crlf
+	call ReadInt
+	mov firstOperand,eax
+	mov ax,SWORD PTR firstOperand
+	mov firstOperand16,ax
+	invoke area_16_fw,firstOpFloat16,firstOperand16
+	jmp endll
+frth16:
+	cmp al,'4'
+	jne endll
+	mov edx,offset enterWhole
+	call WriteString
+	call Crlf
+	call ReadInt
+	mov firstOperand,eax
+	mov ax,SWORD PTR firstOperand 
+	mov firstOperand16,ax
+	mov edx,offset enterFloat
+	call WriteString
+	call Crlf
+	call ReadFloat
+	fstp firstOpFloat
+	invoke area_16_wf ,firstOperand16,firstOpFloat
+	jmp endll
+endll:
+	ret
+A16_BitProgram endp
+
+;---------------------16 Main Proc ----------------;
+
+;------------------------------------------------------;
+
+;---------------PROCEDURES For 32 Bit------------------;
+
+;------------------------------------------------------;
+area_32_whole proc USES eax ebx ecx, 
+	fst2:sdword,
+	scd:sdword
+	mov eax,fst2
+	mov ebx,scd
+	mul ebx
+	mov resultWhole32,eax
+	call WriteInt
+	call Crlf 
+	ret
+area_32_whole endp 
+
+area_32_float proc USES eax ecx ebx edx,
+	fst2:REAL4,
+	scd:REAL4
+	finit
+	fld fst2
+	fld scd
+	fmul
+	call showFpuStack
+	call Crlf
+	fstp resultFloat32 
+	ret
+area_32_float endp
+
+area_32_fw proc USES eax ebx ecx,
+	fst2:REAL4,
+	scd:sdword
+	finit
+	fld fst2
+	fimul scd
+	call showFpuStack
+	call Crlf
+	fstp resultFloat32
+	ret
+area_32_fw endp
+
+area_32_wf proc USES eax ebx ecx,
+	fst2:sdword,
+	scd:REAL4
+	finit
+	fld scd
+	fimul fst2
+	call showFpuStack
+	call Crlf
+	fstp resultFloat32
+	ret
+area_32_wf endp
+
+
 
 ;------------------------------------------------------;
 
@@ -149,11 +319,64 @@ main endp
 ;------------------------------------------------------;
 
 
-
-
 ;------------------------------------------------------;
 
-;---------------PROCEDURES For 32 Bit------------------;
+;---------------PROCEDURES For 16 Bit------------------;
+;area_16_whole proto, fst2:sword,scd:sword
+;area_16_float proto,fst2:REAL4,scd:REAL4
+;area_16_fw proto,fst2:REAL4,scd:sword
+;area_16_wf proto,fst2:sword,scd:REAL4
+
+;------------------------------------------------------;
+area_16_whole proc USES ax bx cx,
+	fst2:sword,
+	scd:sword
+	mov ax,fst2
+	mov bx,scd
+	mul bx
+	mov resultWhole16,ax
+	call WriteInt
+	call Crlf
+	ret
+area_16_whole endp
+
+area_16_float proc,
+	fst2:REAL4,
+	scd:REAL4
+	finit
+	fld fst2
+	fld scd
+	fmul
+	call showFpuStack
+	call Crlf
+	fstp resultFloat16
+	ret
+area_16_float endp
+
+area_16_fw proc,
+	fst2:REAL4,
+	scd:sword
+	finit
+	fld fst2
+	fimul scd
+	call showFpuStack
+	call Crlf
+	fstp resultFloat16
+	ret
+area_16_fw endp
+
+area_16_wf proc,
+	fst2:sword,
+	scd:REAL4
+	finit
+	fld scd
+	fimul fst2
+	call showFpuStack
+	call Crlf
+	fstp resultFloat16
+	ret 
+area_16_wf endp
+;---------------PROCEDURES For 16 Bit------------------;
 
 ;------------------------------------------------------;
 
