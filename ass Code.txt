@@ -1,0 +1,159 @@
+Include D:\COA LABS\Irvine\Irvine32.inc
+.data
+;-------------PROTO----------------;
+area_32_whole proto, fst:sdword,scd:sdword
+area_32_float proto,fst:REAL4,scd:REAL4
+area_32_fw proto,fst:REAL4,scd:sdword
+area_32_wf proto,fst:sdword,scd:REAL4
+
+
+area_16_whole proto, fst:sword,scd:sword
+area_16_float proto,fst:REAL2,scd:REAL2
+area_16_fw proto,fst:REAL2,scd:sword
+area_16_wf proto,fst:sword,scd:REAL2
+
+
+
+
+;----------- Variables ------------;
+;-------------- 32 bit var---------;
+firstOperand SDWORD ?
+secondOperand SDWORD ?
+firstOpFloat REAL4 ?
+secondOpFloat REAL4 ?
+;-------------- 32 bit var---------;
+
+;-------------- 16 bit var---------;
+;-------------- 16 bit var---------;
+;----------- Variables ------------;
+;--------- Case Table -------------;
+caseTable BYTE '1'
+	DWORD 32_BitProgram
+EntrySize=($-caseTable)
+	byte '2'
+	DWORD 16_BitProgram
+noOfEntries=($-caseTable)/EntrySize
+
+;--------- Case Table -------------;
+
+;--------- Prompts-----------------;
+prompt BYTE "Enter Choices...",0
+displayDetails BYTE "1.32 Bit Programing..",0ah,0dh
+			BYTE "2. 16 Bit Programing..",0
+
+select32 BYTE "You 32 Bit Programing... ",0ah,0dh,
+		Byte "1. For Both Whole Numbers ",0ah,0dh,
+		Byte "2. For Both Floating points ",0ah,0dh,
+		Byte "3. For First Floating second Whole "0ah,0dh,
+		Byte "3. For First Whole second Floating",0
+select16 BYTE "You 16 Bit Programing... ",0ah,0dh,
+		Byte "1. For Both Whole Numbers ",0ah,0dh,
+		Byte "2. For Both Floating points ",0ah,0dh,
+		Byte "3. For First Floating second Whole "0ah,0dh,
+		Byte "3. For First Whole second Floating",0
+	
+;--------- Prompts-----------------;
+.code
+main proc
+	finit
+	mov edx,offset prompt
+	call WriteString
+	call Crlf
+	call Crlf
+	mov edx,offset displayDetails
+	call WriteString
+	call Crlf
+	call Crlf
+	mov esi,offset caseTable
+	mov ecx,noOfEntries
+	call ReadChar
+l1:
+	cmp al,[esi]
+	jne l2
+	je choices
+	;call NEAR PTR [esi+1]
+	jmp L3
+l2:
+	add esi,EntrySize
+	loop l1
+l3:	
+	exit
+
+choices:
+;------------- 32 Bit ----------------;
+	cmp al,'1'
+	jne second
+	call FAR ptr [esi+1]
+
+32_BitProgram:
+	mov edx, offset select32 
+	call WriteString
+	call Crlf
+	call ReadChar
+	cmp al,'1'
+	jne sec32
+	call ReadInt
+	mov firstOperand,eax
+	call ReadInt
+	mov secondOperand,eax
+	
+	jmp l3
+sec32:
+	cmp al,'2'
+	jne third32
+	call ReadFloat
+	fstp firstOpFloat
+	call ReadFloat
+	fstp secondOpFloat
+	jmp l3
+third32:
+	cmp al,'3'
+	jne frth32
+	call ReadFloat
+	fstp firstOpFloat
+	call ReadInt
+	mov firstOperand,eax
+
+frth32:
+	cmp al,'4'
+	jne l3
+	call ReadInt
+	mov firstOperand,eax
+	call ReadFloat
+	fstp firstOpFloat
+	jmp l3
+
+
+
+
+
+; --------------16 bit-----------------;
+second:
+	cmp al,'2'
+	jne l3
+	call FAR PTR [esi+1]
+
+16_BitProgram
+	mov edx,offset select16
+	call WriteString
+	call Crlf
+	call ReadChar
+	jmp l3
+main endp
+
+;------------------------------------------------------;
+
+;---------------PROCEDURES For 32 Bit------------------;
+
+;------------------------------------------------------;
+
+
+
+
+;------------------------------------------------------;
+
+;---------------PROCEDURES For 32 Bit------------------;
+
+;------------------------------------------------------;
+
+end main
